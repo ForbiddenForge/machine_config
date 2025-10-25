@@ -47,7 +47,7 @@ if service docker status 2>&1 | grep -q "is not running"; then
 fi
 ```
 
-Then run: `source ~/.bashrc`
+Then run: `source ~/.bashrc` or `source ~/.zshrc`
 
 ---
 
