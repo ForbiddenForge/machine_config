@@ -359,3 +359,389 @@ Create migration: alembic revision --autogenerate -m "message"
 Apply migrations: alembic upgrade head
 Rollback: alembic downgrade -1
 Check status: alembic current
+
+
+Cloning Production Database to Local Development
+Complete guide for safely copying production database schemas and data to your local development environment.
+
+Table of Contents
+
+Scenario 1: With Alembic in Repo
+Scenario 2: No Alembic (Legacy)
+Getting Production Data
+Sanitizing Data
+Seed Scripts
+Best Practices
+
+
+Scenario 1: With Alembic in Repo (Schema Only)
+Get the Schema:
+bash# 1. Drop your local database (start fresh)
+sqlcmd -S localhost -U sa -P DevPassword123 -C -Q "DROP DATABASE IF EXISTS DevDB; CREATE DATABASE DevDB;"
+
+# 2. Run all migrations
+alembic upgrade head
+This gives you:
+
+✅ All tables, columns, indexes, constraints
+❌ NO data from production
+
+To get data too, see Getting Production Data below.
+
+Scenario 2: No Alembic (Legacy/Existing Database)
+You need to extract the schema from MSSQL Enterprise. Here are your options:
+Option A: Using Azure Data Studio / SSMS (GUI - Easiest)
+Step 1: Connect to Production Database
+
+Open Azure Data Studio or SSMS
+Connect to production server (read-only credentials!)
+
+Step 2: Generate Schema Script
+In Azure Data Studio:
+
+Right-click database → Script as Create
+Or: Right-click database → Generate Scripts
+Choose options:
+
+Script indexes: Yes
+Script foreign keys: Yes
+Script data: No (for now)
+
+
+Save to file: schema.sql
+
+In SSMS:
+
+Right-click database → Tasks → Generate Scripts
+Choose "Select specific database objects"
+Select all tables you need
+Set Scripting Options:
+
+General → Types of data to script: Schema only
+Table/View Options → Script indexes: True
+Table/View Options → Script foreign keys: True
+
+
+Save to file: schema.sql
+
+Step 3: Run Schema on Your Local Database
+bash# Apply the schema script to your local database
+sqlcmd -S localhost -U sa -P DevPassword123 -C -d DevDB -i schema.sql
+
+Option B: Using mssql-scripter (Command Line)
+Install:
+bashpip install mssql-scripter
+Generate Schema Script:
+bash# Connect to production and generate schema
+mssql-scripter \
+  -S prod-server.company.com \
+  -d ProductionDB \
+  -U readonly_user \
+  -P password \
+  --schema-only \
+  --file-path schema.sql
+Apply to Local:
+bashsqlcmd -S localhost -U sa -P DevPassword123 -C -d DevDB -i schema.sql
+
+Option C: Using sqlcmd (Script Individual Objects)
+Get list of tables:
+bashsqlcmd -S prod-server.company.com -U readonly_user -P password -d ProductionDB -Q "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE';" -o tables.txt
+Script each table:
+bash# This is manual/scripted approach
+sqlcmd -S prod-server.company.com -U readonly_user -P password -d ProductionDB -Q "
+SELECT 
+    'CREATE TABLE [' + TABLE_NAME + '] (' + CHAR(13) +
+    STUFF((
+        SELECT ', ' + COLUMN_NAME + ' ' + DATA_TYPE + 
+            CASE WHEN CHARACTER_MAXIMUM_LENGTH IS NOT NULL 
+                THEN '(' + CAST(CHARACTER_MAXIMUM_LENGTH AS VARCHAR) + ')' 
+                ELSE '' END
+        FROM INFORMATION_SCHEMA.COLUMNS c2
+        WHERE c2.TABLE_NAME = t.TABLE_NAME
+        FOR XML PATH('')
+    ), 1, 2, '') + ')'
+FROM INFORMATION_SCHEMA.TABLES t
+WHERE TABLE_TYPE = 'BASE TABLE'
+" -o create_tables.sql
+
+Getting Production Data
+⚠️ Important: Sanitize production data for local development!
+Option 1: Full Database Backup/Restore (Complete Copy)
+On Production Server:
+sql-- Create backup
+BACKUP DATABASE ProductionDB 
+TO DISK = '/tmp/prod_backup.bak'
+WITH COMPRESSION;
+Copy to Your Machine:
+bash# Use scp, sftp, or download from blob storage
+scp prod-server:/tmp/prod_backup.bak ~/prod_backup.bak
+Copy into Docker Container:
+bash# Copy backup file to container
+docker cp ~/prod_backup.bak sqlserver:/var/opt/mssql/data/prod_backup.bak
+
+# Restore in container
+docker exec -it sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P DevPassword123! -C -Q "
+RESTORE DATABASE DevDB 
+FROM DISK = '/var/opt/mssql/data/prod_backup.bak'
+WITH MOVE 'ProductionDB' TO '/var/opt/mssql/data/DevDB.mdf',
+     MOVE 'ProductionDB_log' TO '/var/opt/mssql/data/DevDB_log.ldf',
+     REPLACE;
+"
+
+Option 2: Export/Import Specific Tables (Selective Data)
+Using BCP (Bulk Copy Program):
+bash# Export data from production
+bcp "SELECT * FROM ProductionDB.dbo.users" queryout users.dat \
+  -S prod-server.company.com \
+  -U readonly_user \
+  -P password \
+  -c
+
+# Import to local
+bcp DevDB.dbo.users in users.dat \
+  -S localhost \
+  -U sa \
+  -P DevPassword123! \
+  -c
+For multiple tables, create a script:
+bash#!/bin/bash
+TABLES=("users" "todos" "comments")
+
+for table in "${TABLES[@]}"; do
+  # Export from prod
+  bcp "SELECT * FROM ProductionDB.dbo.$table" queryout ${table}.dat \
+    -S prod-server.company.com -U readonly_user -P password -c
+  
+  # Import to local
+  bcp DevDB.dbo.$table in ${table}.dat \
+    -S localhost -U sa -P DevPassword123! -c
+done
+
+Option 3: Using Azure Data Studio (GUI)
+Export Data:
+
+Connect to production
+Right-click table → Export Data
+Choose format: CSV or JSON
+Save file
+
+Import Data:
+
+Connect to local database
+Right-click table → Import Data
+Select file
+Map columns
+Import
+
+
+Option 4: SQL INSERT Statements (Small Datasets)
+Generate INSERT statements from production:
+bashsqlcmd -S prod-server.company.com -U readonly_user -P password -d ProductionDB -Q "
+SELECT 'INSERT INTO users (id, email, username) VALUES (' + 
+       CAST(id AS VARCHAR) + ', ''' + email + ''', ''' + username + ''');'
+FROM users
+" -o insert_users.sql
+Run on local:
+bashsqlcmd -S localhost -U sa -P DevPassword123 -C -d DevDB -i insert_users.sql
+
+Sanitizing Production Data for Local Use
+⚠️ NEVER use real production data with PII locally without sanitizing!
+Option 1: During Export (Best Practice)
+sql-- Export sanitized data
+SELECT 
+    id,
+    'user' + CAST(id AS VARCHAR) + '@example.com' AS email,  -- Fake emails
+    'user_' + CAST(id AS VARCHAR) AS username,                -- Fake usernames
+    'SanitizedPassword!' AS hashed_password,                  -- Same password for all
+    is_active,
+    role
+FROM users
+Option 2: After Import
+sql-- Sanitize local database after import
+UPDATE users 
+SET 
+    email = 'user' + CAST(id AS VARCHAR) + '@example.com',
+    username = 'user_' + CAST(id AS VARCHAR),
+    hashed_password = '$2b$12$sanitized...',
+    first_name = 'Test',
+    last_name = 'User' + CAST(id AS VARCHAR);
+
+Recommended Workflow for Each Scenario
+If Repo Has Alembic:
+bash# 1. Get schema (from Alembic)
+alembic upgrade head
+
+# 2. Get sample data (NOT full production data!)
+# Option A: Create seed data
+python seed_database.py
+
+# Option B: Export sanitized subset from prod
+# (See sanitization examples above)
+
+If No Alembic (Legacy Project):
+bash# 1. Get schema using Azure Data Studio
+# - Connect to prod (read-only)
+# - Generate Scripts → Schema only
+# - Save as schema.sql
+
+# 2. Apply schema locally
+sqlcmd -S localhost -U sa -P DevPassword123 -C -d DevDB -i schema.sql
+
+# 3. (Optional) Initialize Alembic to track future changes
+alembic init alembic
+alembic stamp head  # Mark current state as baseline
+
+# 4. Get sample data (sanitized!)
+
+Creating a Seed Script (Recommended for Development)
+Instead of using production data, create seed data:
+seed_database.py:
+pythonfrom database import SessionLocal
+from models import Users, Todos
+from passlib.context import CryptContext
+
+bcrypt = CryptContext(schemes=["bcrypt"])
+
+db = SessionLocal()
+
+# Create test users
+users = [
+    Users(
+        email=f"user{i}@example.com",
+        username=f"testuser{i}",
+        first_name="Test",
+        last_name=f"User{i}",
+        hashed_password=bcrypt.hash("password123"),
+        is_active=True,
+        role="user" if i > 1 else "admin"
+    )
+    for i in range(1, 11)
+]
+
+db.add_all(users)
+db.commit()
+
+# Create test todos
+todos = [
+    Todos(
+        title=f"Test Todo {i}",
+        description=f"Description for todo {i}",
+        priority=i % 5 + 1,
+        complete=i % 3 == 0,
+        owner_id=(i % 10) + 1
+    )
+    for i in range(1, 51)
+]
+
+db.add_all(todos)
+db.commit()
+
+print("✅ Database seeded with test data!")
+db.close()
+Run it:
+bashpython seed_database.py
+
+Quick Reference
+ScenarioToolPurposeHas Alembicalembic upgrade headGet schemaNo AlembicAzure Data Studio → Generate ScriptsGet schemaFull copyBackup/RestoreSchema + DataSpecific tablesBCP utilityExport/Import dataSmall dataSQL INSERT scriptsManual data copyDevelopmentseed_database.pyCreate test data
+
+Best Practice Recommendation:
+For Development:
+
+✅ Use Alembic migrations (or generate schema script once)
+✅ Create seed script with fake data
+❌ Don't copy production data (legal/security issues)
+✅ If you must use prod data, heavily sanitize it
+
+Example workflow:
+bash# Fresh setup on new machine
+git clone repo
+docker start sqlserver
+alembic upgrade head          # Get schema
+python seed_database.py       # Get test data
+uvicorn main:app --reload     # Start developing!
+This approach is:
+
+✅ Fast
+✅ Safe (no PII exposure)
+✅ Consistent across team
+✅ No prod database access needed
+
+
+Important Security Notes
+What is PII?
+PII (Personally Identifiable Information) includes:
+
+Email addresses
+Names (first, last)
+Phone numbers
+Addresses
+Social Security Numbers
+Credit card numbers
+Any data that can identify a person
+
+Why Sanitize?
+Legal:
+
+GDPR fines: Up to €20 million
+CCPA fines: $2,500-$7,500 per violation
+HIPAA fines: Up to $50,000 per violation
+
+Security:
+
+Laptop theft = data breach
+Developer machines often less secure
+Multiple copies = more exposure
+
+Career:
+
+You can be personally liable
+Criminal charges possible in severe cases
+
+Safe Development Rules:
+
+Never copy production databases to local machines
+Never commit credentials to git
+Never log PII (emails, names, addresses)
+Always use fake data for local development
+Always encrypt PII at rest and in transit
+Always ask: "Do I really need to collect/store this?"
+
+
+Troubleshooting
+"Database already exists"
+bash# Drop and recreate
+sqlcmd -S localhost -U sa -P DevPassword123 -C -Q "DROP DATABASE DevDB; CREATE DATABASE DevDB;"
+"Cannot open backup device"
+bash# Verify file exists in container
+docker exec sqlserver ls -la /var/opt/mssql/data/
+
+# Check permissions
+docker exec sqlserver chmod 644 /var/opt/mssql/data/prod_backup.bak
+"Restore failed - logical file names don't match"
+sql-- List logical file names in backup
+RESTORE FILELISTONLY FROM DISK = '/var/opt/mssql/data/prod_backup.bak';
+
+-- Use correct names in RESTORE command
+RESTORE DATABASE DevDB FROM DISK = '/path/to/backup.bak'
+WITH MOVE 'actual_data_file_name' TO '/var/opt/mssql/data/DevDB.mdf',
+     MOVE 'actual_log_file_name' TO '/var/opt/mssql/data/DevDB_log.ldf',
+     REPLACE;
+BCP "Unable to open BCP host data-file"
+bash# Check file path is correct
+ls -la users.dat
+
+# Use absolute paths
+bcp DevDB.dbo.users in /home/user/users.dat -S localhost -U sa -P password -c
+
+Summary
+Schema + Fake Data (Recommended):
+bashalembic upgrade head         # Schema from migrations
+python seed_database.py      # Fake data
+Schema from Production (No Alembic):
+bash# Generate schema.sql from prod using Azure Data Studio
+sqlcmd -S localhost -U sa -P pass -C -d DevDB -i schema.sql
+python seed_database.py      # Fake data
+Production Data (Only if absolutely necessary):
+bash# Get backup, sanitize PII, then restore
+# Better: Use staging database instead
+Golden Rule: Prefer fake data over production data for local development! 🔒
