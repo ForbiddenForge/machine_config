@@ -1,4 +1,4 @@
-Step 7: Database Migrations with Alembic
+Database Migrations with Alembic
 Why Use Alembic?
 Instead of dropping/recreating your database every time you change models, Alembic tracks and applies incremental changes (migrations). This is essential for:
 
@@ -72,7 +72,7 @@ if config.config_file_name is not None:
 # Set target metadata for 'autogenerate' support
 target_metadata = Base.metadata
 
-
+'''python
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
     url = config.get_main_option("sqlalchemy.url")
@@ -109,6 +109,7 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
+'''
 Key changes:
 
 Imports your Base and models
