@@ -143,7 +143,11 @@ Install SQL command-line tools in WSL:
 curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
 
 # Add the SQL Server tools repository
-curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+# Get Ubuntu version
+lsb_release -rs
+
+# Then use that version number (e.g., 22.04)
+curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
 
 # Update package list and install
 sudo apt-get update
