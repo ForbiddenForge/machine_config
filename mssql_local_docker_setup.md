@@ -155,7 +155,12 @@ sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
 
 # Add to PATH
 echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+OR
+echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.zshrc
+
 source ~/.bashrc
+OR
+source ~/.zshrc
 
 # Test connection to SQL Server
 sqlcmd -S localhost -U sa -P DevPassword123! -C
