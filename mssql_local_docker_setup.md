@@ -506,7 +506,7 @@ docker rm -f sqlserver && docker volume rm sqlvolume
 
 ## Production Considerations
 
-When connecting to **enterprise SQL Server** at work:
+When connecting to **enterprise SQL Server** in prod:
 
 ```python
 # Production connection
