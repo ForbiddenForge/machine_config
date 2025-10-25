@@ -489,6 +489,9 @@ sqlcmd -S localhost -U sa -P DevPassword123! -C
 # Create database
 sqlcmd -S localhost -U sa -P DevPassword123! -C -Q "CREATE DATABASE DevDB"
 
+# Delete database
+sqlcmd -S localhost -U sa -P DevPassword123 -C -Q "DROP DATABASE IF EXISTS DevDB; # can chain additional commands here. 
+
 # Backup database
 docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P DevPassword123! -Q "BACKUP DATABASE DevDB TO DISK='/var/opt/mssql/data/DevDB.bak'" -C
 
