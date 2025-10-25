@@ -139,17 +139,21 @@ docker volume rm sqlvolume
 Install SQL command-line tools in WSL:
 
 ```bash
-# Install sqlcmd
-curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+# Download and install the Microsoft signing key
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+
+# Add the SQL Server tools repository
+curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+
+# Update package list and install
 sudo apt-get update
-sudo apt-get install -y mssql-tools18 unixodbc-dev
+sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
 
 # Add to PATH
 echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
 source ~/.bashrc
 
-# Connect to SQL Server
+# Test connection to SQL Server
 sqlcmd -S localhost -U sa -P DevPassword123! -C
 ```
 
