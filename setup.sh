@@ -3,7 +3,7 @@
 # ============================================================================
 
 # 1. Install WSL (PowerShell as Admin)
-# wsl --install
+ wsl --install
 
 # 2. Restart computer, then set up Ubuntu username/password
 
