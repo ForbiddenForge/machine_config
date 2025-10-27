@@ -1,0 +1,113 @@
+// Place your key bindings in this file to override the defaultsauto[]
+[
+	{
+		"key": "ctrl+b",
+		"command": "python.execInTerminal-icon"
+	},
+	{
+		"key": "ctrl+alt+b",
+		"command": "workbench.action.closePanel"
+    },
+    {
+        "key": "ctrl+alt+right",
+        "command": "-workbench.action.moveEditorToNextGroup"
+    },
+    {
+        "key": "shift+alt+i",
+        "command": "-editor.action.insertCursorAtEndOfEachLineSelected",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+`",
+        "command": "editor.action.inspectTMScopes"
+    },
+    {
+        "key": "alt+right",
+        "command": "cursorWordEndRight",
+        "when": "textInputFocus && !accessibilityModeEnabled"
+    },
+    {
+        "key": "alt+left",
+        "command": "cursorWordEndLeft",
+        "when": "textInputFocus && !accessibilityModeEnabled"
+    },
+    {
+        "key": "ctrl+right",
+        "command": "cursorLineEnd"
+    },
+    {
+        "key": "ctrl+left",
+        "command": "cursorLineStart"
+    },
+    {
+        "key": "ctrl+`",
+        "command": "workbench.action.terminal.toggleTerminal",
+        "when": "terminal.active"
+    },
+    {
+        "key": "ctrl+`",
+        "command": "-workbench.action.terminal.toggleTerminal",
+        "when": "terminal.active"
+    },
+    {
+        "key": "tab",
+        "command": "closeParameterHints",
+        "when": "editorFocus && parameterHintsVisible"
+    },
+    {
+        "key": "escape",
+        "command": "closeParameterHints",
+        "when": "editorFocus && parameterHintsVisible"
+    },
+    {
+        "key": "escape",
+        "command": "closeParameterHints",
+        "when": "editorTextFocus && suggestWidgetVisible"
+    },
+    {
+        "key": "ctrl+'",
+        "command": "code-runner.run"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "-code-runner.run"
+    },
+    {
+        "key": "ctrl+;",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+            "cursorEnd",  // Just go to end of line
+            { "command": "type", "args": { "text": ":" } }
+            ]
+        },
+        "when": "editorTextFocus && editorLangId == python"
+    },
+    {
+        "key": "alt+enter",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+            "cursorEnd",  // Just go to end of line
+            { "command": "type", "args": { "text": ":" } }
+            ]
+        },
+        "when": "editorTextFocus && editorLangId == python"
+    },
+    {
+        "key": "ctrl+shift+;",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+            "cursorEnd",
+            {
+                "command": "editor.action.insertSnippet",
+                "args": {
+                "snippet": " -> ${1:ReturnType}:"
+                }
+            }
+            ]
+        },
+        "when": "editorTextFocus && editorLangId == python"
+    }
+]
