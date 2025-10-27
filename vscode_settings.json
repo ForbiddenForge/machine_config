@@ -1,0 +1,544 @@
+{
+  // Core Editor Settings
+  "editor.linkedEditing": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.fontSize": 20,
+  "editor.minimap.enabled": false,
+  "editor.wordWrap": "on",
+  "editor.tabSize": 2,
+  "editor.semanticTokenColorCustomizations": {},
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "never"
+  },
+
+  // File Management
+  "files.autoSave": "onFocusChange",
+  "explorer.compactFolders": false,
+  "files.trimTrailingWhitespace": true,
+
+  // Workbench Appearance
+  "workbench.colorTheme": "Monokai Pro (Filter Spectrum)",
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.preferredHighContrastColorTheme": "Default Dark+",
+  "workbench.preferredDarkColorTheme": "Visual Studio Dark",
+  "workbench.preferredHighContrastLightColorTheme": "Default Dark+",
+  "workbench.preferredLightColorTheme": "Default Dark+",
+  "workbench.colorCustomizations": {},
+  "workbench.editor.wrapTabs": true,
+
+  // PHP Settings
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client",
+    "editor.formatOnSave": true,
+		"editor.tabSize": 4,
+  },
+  "intelephense.format.braces": "k&r",
+	"intelephense.format.enable": true,
+  "intelephense.files.maxSize": 3000000,
+  "intelephense.stubs": [
+    "apache",
+    "bcmath",
+    "bz2",
+    "calendar",
+    "com_dotnet",
+    "Core",
+    "ctype",
+    "curl",
+    "date",
+    "dba",
+    "dom",
+    "enchant",
+    "exif",
+    "FFI",
+    "fileinfo",
+    "filter",
+    "fpm",
+    "ftp",
+    "gd",
+    "gettext",
+    "gmp",
+    "hash",
+    "iconv",
+    "imap",
+    "intl",
+    "json",
+    "ldap",
+    "libxml",
+    "mbstring",
+    "meta",
+    "mysqli",
+    "oci8",
+    "odbc",
+    "openssl",
+    "pcntl",
+    "pcre",
+    "PDO",
+    "pdo_ibm",
+    "pdo_mysql",
+    "pdo_pgsql",
+    "pdo_sqlite",
+    "pgsql",
+    "Phar",
+    "posix",
+    "pspell",
+    "readline",
+    "Reflection",
+    "session",
+    "shmop",
+    "SimpleXML",
+    "snmp",
+    "soap",
+    "sockets",
+    "sodium",
+    "SPL",
+    "sqlite3",
+    "standard",
+    "superglobals",
+    "sysvmsg",
+    "sysvsem",
+    "sysvshm",
+    "tidy",
+    "tokenizer",
+    "xml",
+    "xmlreader",
+    "xmlrpc",
+    "xmlwriter",
+    "xsl",
+    "Zend OPcache",
+    "zip",
+    "zlib",
+    "wordpress"
+  ],
+
+  // JavaScript/TypeScript Settings
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false,
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": true,
+  },
+  "javascript.preferences.quoteStyle": "single",
+  "javascript.updateImportsOnFileMove.enabled": "never",
+
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false,
+    "prettier.singleAttributePerLine": true
+  },
+  "typescript.updateImportsOnFileMove.enabled": "never",
+  "typescript.preferences.quoteStyle": "single",
+
+  // React/JSX Settings
+  "[typescriptreact]": {
+    "editor.defaultFormatter":"vscode.typescript-language-features",
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false,
+    "prettier.singleAttributePerLine": true
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter":"esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false,
+    "prettier.singleAttributePerLine": true,
+  },
+  "[jsx-tags]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false
+  },
+  "[jsx]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false,
+    "prettier.singleAttributePerLine": true
+  },
+  "reactSnippets.settings.prettierEnabled": true,
+
+  // Python Settings
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll.ruff": "explicit"
+    },
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+
+
+
+  // Jupyter Settings
+  "notebook.formatOnSave.enabled": true,
+  "notebook.codeActionsOnSave": {
+    "notebook.source.organizeImports": "explicit",
+    "source.fixAll": "explicit",
+    "notebook.source.fixAll.ruff": "explicit"
+  },
+
+
+  // Ruff
+  "ruff.lineLength": 88,
+  "ruff.configuration" : {
+    "format": {
+      "quote-style": "double"
+    },
+    "lint": {
+      "unfixable": ["F401"]
+    }
+  },
+  "ruff.lint.select":  [
+    "A",
+    "ARG",
+    "B",
+    "C",
+    "DTZ",
+    "E",
+    "EM",
+    "F",
+    "FBT",
+    "I",
+    "ICN",
+    "ISC",
+    "N",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "Q",
+    "RUF",
+    "S",
+    "T",
+    "TID",
+    "UP",
+    "W",
+    "YTT",
+  ],
+  "ruff.lint.ignore": [
+    "B027",
+    "FBT003",
+    "S105",
+    "S106",
+    "S107",
+    // Ignore complexity
+    "C901",
+    "PLR0911",
+    "PLR0912",
+    "PLR0913",
+    "PLR0915",
+    // # T201 `print` found
+    "T201",
+    "F401"
+  ],
+
+
+
+  // "[python]": {
+  //   "editor.defaultFormatter": "ms-python.black-formatter",
+  //   "editor.insertSpaces": true,
+  //   "editor.tabSize": 4,
+  //   "editor.formatOnSave": true,
+  //   "editor.formatOnType": false
+  // },
+  // "python.analysis.typeCheckingMode": "basic",
+  // "python.analysis.completeFunctionParens": true,
+  // "python.autoComplete.extraPaths": [],
+  // "python.analysis.extraPaths": [
+  //   "C:\\Users\\Kotek\\AppData\\Roaming\\Python\\Python311\\site-packages",
+  //   "c:\\users\\kotek\\appdata\\local\\programs\\python\\python311\\lib\\site-packages"
+  // ],
+  // "python.terminal.executeInFileDir": true,
+  // "flake8.args": [
+  //   "--max-line-length=120",
+  //   "--ignore=E402,F841,F401,E302,E305"
+  // ],
+  // "black-formatter.args": [
+    //   "-S",
+    //   "--line-length=79",
+    //   "--preview"
+    // ],
+
+    // HTML/CSS/Template Settings
+    "[html]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true
+  },
+  "[css]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true
+  },
+  "[ejs]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "j69.ejs-beautify",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true
+  },
+  "[jinja-html]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "samuelcolvin.jinjahtml",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true
+  },
+  "emmet.includeLanguages": {
+    "jinja-html": "html",
+    "jinja2": "jinja2",
+    "javascript": "javascriptreact",
+    "ejs": "html"
+  },
+
+  // Prettier Configuration
+  "prettier.bracketSameLine": true,
+  "prettier.printWidth": 100,
+  "prettier.useTabs": true,
+  "prettier.singleQuote": true,
+  "prettier.jsxSingleQuote": true,
+
+
+  // TODO Highlighting
+  "todohighlight.isCaseSensitive": true,
+  "todohighlight.keywords": [
+    {
+      "text": "VIDEO",
+      "color": "#333",
+      "backgroundColor": "#3498db"
+    },
+    {
+      "text": "FIXME",
+      "color": "#333",
+      "backgroundColor": "#e67e22"
+    },
+    {
+      "text": "LEC",
+      "color": "#333",
+      "backgroundColor": "#f1c40f"
+    },
+    {
+      "text": "BUG",
+      "color": "#333",
+      "backgroundColor": "#e74c3c"
+    },
+    {
+      "text": "WARNING",
+      "color": "#333",
+      "backgroundColor": "#e74c3c"
+    },
+    {
+      "text": "TODO",
+      "color": "#333",
+      "backgroundColor": "#2ecc71"
+    }
+  ],
+
+  // Token Color Customizations
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": ["punctuation.section.function.begin.python"],
+        "settings": {
+          "foreground": "#50fa7b"
+        }
+      },
+      {
+        "scope": [
+          "constant.other.ellipsis.python",
+          "variable.other.jinja",
+          "variable.other.readwrite.js",
+
+        ],
+        "settings": {
+          "foreground": "#73f3fc"
+        }
+      },
+      {
+        "scope": [
+          "punctuation.separator.colon.python",
+          "storage.type.class.python",
+          "punctuation.section.class.begin.python",
+          "punctuation.other.jinja"
+        ],
+        "settings": {
+          "foreground": "#ff0a5c"
+        }
+      },
+      {
+        "scope": ["entity.name.type.class.python", "entity.name.type.class.js", "entity.name.type.class.ts"],
+        "settings": {
+          "foreground": "#50fa7b",
+          "fontStyle": "underline"
+        }
+      },
+      {
+        "scope": [
+          "variable.language.special.cls.python",
+          "variable.parameter.function.language.special.cls.python"
+        ],
+        "settings": {
+          "foreground": "#50fa7b"
+        }
+      },
+      {
+        "scope": [
+          "variable.language.special.self.python",
+          "variable.parameter.function.language.special.self.python",
+          "variable.language.this.js"
+        ],
+        "settings": {
+          "foreground": "#eb99e5"
+        }
+      },
+      {
+        "scope": ["entity.other.jinja.delimiter.variable", "entity.other.jinja.delimiter.tag"],
+        "settings": {
+          "foreground": "#ed9d34"
+        }
+      },
+      {
+        "scope": [
+          "keyword.control.jinja",
+          "meta.template.expression.js",
+          "punctuation.definition.template-expression.begin.js",
+          "punctuation.definition.template-expression.end.js",
+        ],
+        "settings": {
+          "foreground": "#ff3d3d"
+        }
+      },
+      {
+        "scope": ["punctuation.definition.decorator.python", "meta.object-literal.key.js"],
+        "settings": {
+          "foreground": "#f57bc2"
+        }
+      },
+      {
+        "scope": ["entity.name.function.decorator.python"],
+        "settings": {
+          "foreground": "#cc41f3"
+        }
+      }
+    ]
+  },
+
+  // Tab Out Configuration
+  "tabout.charactersToTabOutFrom": [
+
+    {
+      "open": "[",
+      "close": "]"
+    },
+    {
+      "open": "{",
+      "close": "}"
+    },
+    {
+      "open": "(",
+      "close": ")"
+    },
+    {
+      "open": "'",
+      "close": "'"
+    },
+    {
+      "open": "\"",
+      "close": "\""
+    },
+    {
+      "open": ":",
+      "close": ":"
+    },
+    {
+      "open": "=",
+      "close": "="
+    },
+    {
+      "open": ">",
+      "close": ">"
+    },
+    {
+      "open": "<",
+      "close": "<"
+    },
+    {
+      "open": ".",
+      "close": "."
+    },
+    {
+      "open": "`",
+      "close": "`"
+    },
+    {
+      "open": ";",
+      "close": ";"
+    },
+    {
+      "open": ",",
+      "close": ","
+    }
+  ],
+
+  // Misc Tools Settings
+  "code-runner.clearPreviousOutput": true,
+  "code-runner.preserveFocus": false,
+  "code-runner.enableAppInsights": false,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "liveServer.settings.donotVerifyTags": true,
+  "git.openRepositoryInParentFolders": "never",
+  "gitlens.telemetry.enabled": false,
+  "vsicons.dontShowNewVersionMessage": true,
+  "lldb.library": "/Applications/Xcode.app/Contents/SharedFrameworks/LLDB.framework/Versions/A/LLDB",
+  "lldb.launch.expressions": "native",
+
+  // Settings Sync
+  "settingsSync.ignoredSettings": [
+    "editor.fontSize"
+  ],
+  "eslint.format.enable": true,
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "lldb.suppressUpdateNotifications": true,
+  "ruff.configurationPreference": "filesystemFirst",
+  "workbench.editor.empty.hint": "hidden",
+  "mssql.connectionGroups": [
+    {
+      "name": "ROOT",
+      "id": "3D626E74-4D26-4054-BC7B-D1FCBA5E30B4"
+    }
+  ],
+  "mssql.connections": [
+    {
+      "authenticationType": "SqlLogin",
+      "connectTimeout": 30,
+      "applicationName": "vscode-mssql",
+      "applicationIntent": "ReadWrite",
+      "profileName": "Local Docker MSSQL Server",
+      "server": "localhost",
+      "user": "sa",
+      "password": "",
+      "savePassword": true,
+      "database": "",
+      "trustServerCertificate": true,
+      "groupId": "3D626E74-4D26-4054-BC7B-D1FCBA5E30B4",
+      "id": "E00DC388-9E64-44C7-958E-A6B6B548CE08",
+      "commandTimeout": 30,
+      "encrypt": "Mandatory",
+      "containerName": "sqlserver"
+    }
+  ],
+}
