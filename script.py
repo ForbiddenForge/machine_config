@@ -134,6 +134,42 @@ tract_file_names = [
     "tl_2025_78_tract.zip",
 ]
 
+for attempt in range(max_retries):
+        try:
+            if attempt > 0:
+                print(f"  Retry attempt {attempt + 1}/{max_retries}...")
+            else:
+                print(f"Downloading {url}...")
+            
+            # Increased timeout to 180 seconds (3 minutes) and use streaming
+            response = requests.get(url, timeout=180, stream=True)
+            response.raise_for_status()  # Raise an error for bad status codes
+            
+            # Write in chunks to handle large files better
+            with open(destination, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+            
+            print(f"  ✓ Successfully downloaded to {destination.name}")
+            return True
+            
+        except requests.exceptions.Timeout:
+            print(f"  ⚠ Timeout downloading {url}")
+            if attempt < max_retries - 1:
+                print(f"  Retrying...")
+            else:
+                print(f"  ✗ Failed after {max_retries} attempts")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            print(f"  ✗ Error downloading {url}: {e}")
+            if attempt < max_retries - 1:
+                print(f"  Retrying...")
+            else:
+                return False
+    
+    return False
 
 def download_file(url: str, destination: pathlib.Path) -> bool:
     """Download a file from a URL to a destination path.
